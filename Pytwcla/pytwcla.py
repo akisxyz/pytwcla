@@ -15,20 +15,20 @@ class MyParser(argparse.ArgumentParser):
                                                 os.path.abspath(path)), file)
 
 def main():
-    parser = MyParser()
+    parser = MyParser(prog='pytwcla')
     #parser = argparse.ArgumentParser(description='A foo that bars')
     group = parser.add_mutually_exclusive_group()
-    parser.add_argument("keyword", help="The search query")
+    parser.add_argument("keyword", help="the search query")
     group.add_argument("-r", "--rest", 
-                    help="Search using the REST API",
+                    help="search using the REST API",
                     action="store_true")
     group.add_argument("-s", "--stream", 
-                    help="Search using the Streaming API", 
+                    help="search using the Streaming API", 
                     action="store_true")
-    group.add_argument("-j", "--join", help="Join REST and Stream databases", 
+    group.add_argument("-j", "--join", help="join REST and Stream databases", 
                     action="store_true")
     group.add_argument("-c", "--csv", 
-                    help="Create csv files with daily keyword counts", 
+                    help="create csv files with daily keyword counts", 
                     action="store_true")
     args = parser.parse_args()
     kwd = key.query(args.keyword)
