@@ -26,13 +26,13 @@ If installation is successful, an executable script should be somewhere in your 
 
 ``pytwcla``
 
-**REST search** (keyword = 'fintech'):
+**REST search** (eg. keyword = 'fintech'):
 
 ``pytwcla fintech -r``
 
 Returns IDs and Dates of Tweets matching the specified keyword and saves them in a SQLite database file named fintech_rest.db.
 
-**Stream search** (keyword = 'fintech'):
+**Stream search** (eg. keyword = 'fintech'):
 
 ``pytwcla fintech -s``
 

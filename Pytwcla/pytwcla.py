@@ -4,19 +4,17 @@ import os.path
 import argparse
 import key
 
-class MyParser(argparse.ArgumentParser):
-    def print_help(self, file=None):
-        if file is None:
-            file = sys.stdout
-        (head,tail) = os.path.split(__file__)
-        path = os.path.join(head,'userconfig','api.ini')
-        self._print_message(self.format_help(), file)
-        self._print_message('\napi.ini is located at:\n{0}'.format(
-                                                os.path.abspath(path)), file)
-
-def main():
+def main():    
+    class MyParser(argparse.ArgumentParser):
+        
+        def print_help(self, file=None):
+            if file is None:
+                file = sys.stdout
+            self._print_message(self.format_help(), file)
+            self._print_message('\napi.ini is located at:\n{0}'.format(
+               os.path.abspath(key._path_finder('userconfig','api.ini'))), file)
+        
     parser = MyParser(prog='pytwcla')
-    #parser = argparse.ArgumentParser(description='A foo that bars')
     group = parser.add_mutually_exclusive_group()
     parser.add_argument("keyword", help="the search query")
     group.add_argument("-r", "--rest", 

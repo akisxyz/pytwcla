@@ -10,23 +10,20 @@ import ConfigParser
 import csv
 import tweepy
 
+def _path_finder(fol,fil):
+    (head,tail) = os.path.split(__file__)
+    path = os.path.join(head,fol,fil)
+    return (path)
+
 class query(object):
 
     def __init__(self, keyword):
         self.keyword = keyword
-    
-    @staticmethod    
-    def __path_finder(fol,fil):
-        (head,tail) = os.path.split(__file__)
-        path = os.path.join(head,fol,fil)
-        return (path)
-    
+  
     @staticmethod    
     def __api_init():
         config = ConfigParser.ConfigParser()
-        (head,tail) = os.path.split(__file__)
-        path = os.path.join(head,'userconfig','api.ini')
-        config.read(path)
+        config.read(_path_finder('userconfig','api.ini'))
         consumer_key = config.get('DEFAULT','ConsumerKey',0)
         consumer_secret = config.get('DEFAULT','ConsumerSecret',0)
         access_token = config.get('DEFAULT','AccessToken',0)
@@ -41,9 +38,9 @@ class query(object):
         return (api)
         
     def __db_init(self, type):
-        path = self.__path_finder('keydata','{0}_{1}.db'.format(
-                                                            self.keyword, type))
-        self.conn = sqlite3.connect(path, check_same_thread=False)
+        self.conn = sqlite3.connect(_path_finder(
+                            'keydata','{0}_{1}.db'.format(self.keyword, type)),
+                                                        check_same_thread=False)
         self.c = self.conn.cursor()
         self.c.execute('''CREATE TABLE IF NOT EXISTS tweets
                           (id INT PRIMARY KEY ASC, date TEXT)''')
@@ -60,13 +57,12 @@ class query(object):
         api = self.__api_init()
         self.c.execute("SELECT MAX(id) FROM tweets")
         db_max_id = self.c.fetchone()[0]        
-        path_1 = self.__path_finder('UserConfig','api.ini')
         try: 
             most_recent = api.search(q=self.keyword, result_type='recent')[0].id
         except tweepy.TweepError as e:
             print(str(e.message[0]['message']) + 
                                 ' Update api.ini with your proper credentials:')
-            print(os.path.abspath(path_1))
+            print(os.path.abspath(_path_finder('UserConfig','api.ini')))
             sys.exit(-1)
         flag = 0
         while ( flag == 0 ):
@@ -97,10 +93,9 @@ class query(object):
         print(data['resources']['search'])
         self.conn.commit()
         self.conn.close()
-        print('REST database file has been created/updated:')
-        path_2 = self.__path_finder('keydata','{0}_rest.db'.format(
-                                                                self.keyword))
-        print(os.path.abspath(path_2))
+        print('REST database file has been created/updated:')        
+        print(os.path.abspath(_path_finder(
+                                'keydata','{0}_rest.db'.format(self.keyword))))
                 
     def stream_api(self):
         """
@@ -111,7 +106,6 @@ class query(object):
         """
         (conn, c) = self.__db_init('stream')
         api = self.__api_init()
-        path = self.__path_finder('UserConfig','api.ini')
 
         class MyStreamListener(tweepy.StreamListener):
             
@@ -128,7 +122,8 @@ class query(object):
                 if status_code == 401:
                     print('Bad Authentication data.' + 
                                 ' Update api.ini with your proper credentials:')
-                    print(os.path.abspath(path))
+                    print(os.path.abspath(
+                                        _path_finder('UserConfig','api.ini')))
                     return False #Disconnect the stream.
                 elif status_code == 420:
                     print('Error 420')
@@ -150,10 +145,8 @@ class query(object):
         Returns:
             sqlite database file: [keyword]_joined.db              
         """
-        path_1 = self.__path_finder('keydata','{0}_rest.db'.format(
-                                                                self.keyword))
-        path_2 = self.__path_finder('keydata','{0}_stream.db'.format(
-                                                                self.keyword))
+        path_1 = _path_finder('keydata','{0}_rest.db'.format(self.keyword))
+        path_2 = _path_finder('keydata','{0}_stream.db'.format(self.keyword))
         if os.path.isfile(path_1) & os.path.isfile(path_2):
             self.__db_init('joined')
             self.c.execute("ATTACH '{0}' as restdb".format(path_1))
@@ -166,10 +159,9 @@ class query(object):
             self.c.execute("DETACH DATABASE 'streamdb'")
             self.conn.commit()
             self.conn.close()
-            path_3 = self.__path_finder('keydata','{0}_joined.db'.format(
-                                                                self.keyword))
             print('Databases have been merged:')
-            print(os.path.abspath(path_3))
+            print(os.path.abspath(_path_finder(
+                            'keydata','{0}_joined.db'.format(self.keyword))))
             
     def create_csv(self, type):
         """
@@ -181,10 +173,9 @@ class query(object):
         Returns:
             csv file: [keyword]_[type].csv (based on data from 
             [keyword]_[type].db)
-        """
-        path_1 = self.__path_finder('keydata','{0}_{1}.db'.format(
-                                                            self.keyword,type))
-        if os.path.isfile(path_1):
+        """        
+        if os.path.isfile(_path_finder('keydata','{0}_{1}.db'.format(
+                                                        self.keyword,type))):
             self.__db_init('{0}'.format(type))
             self.c.execute("SELECT MIN(date) FROM tweets")
             mindate = self.c.fetchone()[0][0:10]
@@ -205,12 +196,12 @@ class query(object):
                                     date like('{0}')'''.format(d))
                     yield [d[1:11], self.c.fetchone()[0]]
             
-            path_2 = self.__path_finder('keydata','{0}_{1}.csv'.format(
+            path = _path_finder('keydata','{0}_{1}.csv'.format(
                                                             self.keyword,type))
-            with open(path_2, 'wb') as f:
+            with open(path, 'wb') as f:
                 writer = csv.writer(f)
                 writer.writerows(__db_to_list())
             self.conn.commit()
             self.conn.close()
             print('Report has been created:')
-            print(os.path.abspath(path_2))
+            print(os.path.abspath(path))
