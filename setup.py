@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='Pytwcla',
-    version='0.1',
+    version='0.1.1',
     description="Command-line app for collecting keyword-based Twitter data.",
     author='akisxyz',
     license='MIT',
