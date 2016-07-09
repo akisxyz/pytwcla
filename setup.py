@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='Pytwcla',
-    version='0.1.1',
+    version='0.1.2',
     description="Command-line app for collecting keyword-based Twitter data.",
     author='akisxyz',
     license='MIT',
@@ -12,11 +12,10 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5'],
+        'Programming Language :: Python :: 3.4'],
     keywords=['twitter', 'search', 'stream', 'database'],
     packages=find_packages(),
-    install_requires = [],
-    data_files=[('Docs', ['README.rst'])],
+    install_requires = ['tweepy'],
     include_package_data = True,
     zip_safe=False,
     entry_points = {

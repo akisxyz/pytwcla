@@ -1,8 +1,10 @@
+.. image:: https://img.shields.io/pypi/pyversions/pytwcla.svg?maxAge=2592000   :target:
+
 Pytwcla
 =======
 A Python command-line application for collecting keyword-based Twitter data.
 
-Compatible with Python 2.7 and 3.5.
+Tested with Python 2.7 and 3.4.
 
 Installation
 ------------
