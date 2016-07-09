@@ -10,7 +10,7 @@ def main():
         def print_help(self, file=None):
             if file is None:
                 file = sys.stdout
-            self._print_message('{0}\napi.ini is located at:\n{1}'.format(
+            self._print_message('{0}\napi.ini is located at:\n{1}\n'.format(
                             self.format_help(),os.path.abspath(key._path_finder(
                             'userconfig','api.ini'))), file)
             

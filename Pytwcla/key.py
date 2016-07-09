@@ -6,9 +6,12 @@ import os.path
 import time
 import datetime
 import sqlite3
-import ConfigParser
 import csv
 import tweepy
+try:
+    import ConfigParser
+except:
+    import configparser
 
 def _path_finder(fol,fil):
     (head,tail) = os.path.split(__file__)
