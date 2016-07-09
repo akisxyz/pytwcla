@@ -1,2 +1,2 @@
-include Pytwcla/UserConfig/api.ini
-include Pytwcla/KeyData/empty.txt
+include Pytwcla/userconfig/api.ini
+include Pytwcla/keydata/empty.txt
