@@ -2,7 +2,7 @@
 import sys
 import os.path
 import argparse
-import key
+from Pytwcla import key
 
 def main():    
     class MyParser(argparse.ArgumentParser):

@@ -11,7 +11,7 @@ import tweepy
 try:
     import ConfigParser
 except:
-    import configparser
+    import configparser as ConfigParser
 
 def _path_finder(fol,fil):
     (head,tail) = os.path.split(__file__)
@@ -27,10 +27,10 @@ class query(object):
     def __api_init():
         config = ConfigParser.ConfigParser()
         config.read(_path_finder('userconfig','api.ini'))
-        consumer_key = config.get('DEFAULT','ConsumerKey',0)
-        consumer_secret = config.get('DEFAULT','ConsumerSecret',0)
-        access_token = config.get('DEFAULT','AccessToken',0)
-        access_token_secret = config.get('DEFAULT','AccessTokenSecret',0)
+        consumer_key = config.get('DEFAULT','ConsumerKey')
+        consumer_secret = config.get('DEFAULT','ConsumerSecret')
+        access_token = config.get('DEFAULT','AccessToken')
+        access_token_secret = config.get('DEFAULT','AccessTokenSecret')
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_token, access_token_secret)
         api = tweepy.API(auth, wait_on_rate_limit=True, 
@@ -65,7 +65,7 @@ class query(object):
         except tweepy.TweepError as e:
             print(str(e.message[0]['message']) + 
                                 ' Update api.ini with your proper credentials:')
-            print(os.path.abspath(_path_finder('UserConfig','api.ini')))
+            print(os.path.abspath(_path_finder('userconfig','api.ini')))
             sys.exit(-1)
         flag = 0
         while ( flag == 0 ):
@@ -126,7 +126,7 @@ class query(object):
                     print('Bad Authentication data.' + 
                                 ' Update api.ini with your proper credentials:')
                     print(os.path.abspath(
-                                        _path_finder('UserConfig','api.ini')))
+                                        _path_finder('userconfig','api.ini')))
                     return False #Disconnect the stream.
                 elif status_code == 420:
                     print('Error 420')
@@ -201,10 +201,14 @@ class query(object):
             
             path = _path_finder('keydata','{0}_{1}.csv'.format(
                                                             self.keyword,type))
-            with open(path, 'wb') as f:
+            if sys.version_info[0] < 3: #Python3 compatibility check
+                infile = open(path, 'wb')
+            else:
+                infile = open(path, 'w', newline='', encoding='utf8')
+            with infile as f:
                 writer = csv.writer(f)
                 writer.writerows(__db_to_list())
             self.conn.commit()
             self.conn.close()
-            print('Report has been created:')
+            print('\nReport has been created:')
             print(os.path.abspath(path))

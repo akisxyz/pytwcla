@@ -1,4 +1,4 @@
 #!/usr/bin/env python
-import pytwcla
+from Pytwcla import pytwcla
 
 pytwcla.main()
